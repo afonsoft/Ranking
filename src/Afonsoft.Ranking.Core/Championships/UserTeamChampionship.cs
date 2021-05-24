@@ -18,6 +18,7 @@ namespace Afonsoft.Ranking.Championships
         public int TenantId { get; set; }
         public long TeamId { get; set; }
         public long UserId { get; set; }
+        public bool Active { get; set; }
 
         [ForeignKey("TeamId")]
         public virtual TeamChampionship TeamChampionship { get; set; }

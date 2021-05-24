@@ -23,6 +23,7 @@ namespace Afonsoft.Ranking.Championships
         public DateTime Schedule { get; set; }
 
         public string Circuit { get; set; }
+        public bool Active { get; set; }
 
         [ForeignKey("ChampionshipId")]
         public virtual Championship Championship { get; set; }

@@ -19,6 +19,8 @@ namespace Afonsoft.Ranking.Championships
         public string Name { get; set; }
         public string Sigla { get; set; }
 
+        public bool Active { get; set; }
+
         [ForeignKey("ChampionshipId")]
         public virtual Championship Championship { get; set; }
 

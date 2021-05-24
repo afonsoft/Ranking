@@ -21,6 +21,7 @@ namespace Afonsoft.Ranking.Championships
         public DateTime DateEnd { get; set; }
 
         public string Name { get; set; }
+        public bool Active { get; set; }
 
         public virtual List<CalendarChampionship> CalendarChampionships { get; set; }
         public virtual List<TeamChampionship> TeamChampionships { get; set; }
