@@ -177,7 +177,12 @@ namespace Afonsoft.Ranking.Web.Controllers
                 await _recaptchaValidator.ValidateAsync(HttpContext.Request.Form[RecaptchaValidator.RecaptchaResponseKey]);
             }
 
-            var loginResult = await GetLoginResultAsync(loginModel.UsernameOrEmailAddress, loginModel.Password, GetTenancyNameOrNull());
+            var loginResult = await GetLoginResultAsync(loginModel.UsernameOrEmailAddress, loginModel.Password, await GetTenancyNameOrNull(loginModel.UsernameOrEmailAddress));//use new GetTenancyNameOrNull method that you add previously
+            if (loginResult?.Tenant?.Id != AbpSession.TenantId)
+            {
+                SetTenantIdCookie(loginResult?.Tenant?.Id);
+                CurrentUnitOfWork.SetTenantId(loginResult?.Tenant?.Id);
+            }
 
             if (!string.IsNullOrEmpty(ss) && ss.Equals("true", StringComparison.OrdinalIgnoreCase) && loginResult.Result == AbpLoginResultType.Success)
             {
@@ -193,7 +198,6 @@ namespace Afonsoft.Ranking.Web.Controllers
             if (loginResult.User.ShouldChangePasswordOnNextLogin)
             {
                 loginResult.User.SetNewPasswordResetCode();
-
                 return Json(new AjaxResponse
                 {
                     TargetUrl = Url.Action(
@@ -225,7 +229,6 @@ namespace Afonsoft.Ranking.Web.Controllers
             }
 
             Debug.Assert(signInResult.Succeeded);
-
             await UnitOfWorkManager.Current.SaveChangesAsync();
 
             return Json(new AjaxResponse { TargetUrl = returnUrl });
@@ -259,6 +262,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             {
                 case AbpLoginResultType.Success:
                     return loginResult;
+
                 default:
                     throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(loginResult.Result, usernameOrEmailAddress, tenancyName);
             }
@@ -283,7 +287,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             return View();
         }
 
-        #endregion
+        #endregion Login / Logout
 
         #region Two Factor Auth
 
@@ -409,7 +413,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             return SettingManager.GetSettingValueAsync<bool>(AbpZeroSettingNames.UserManagement.TwoFactorLogin.IsRememberBrowserEnabled);
         }
 
-        #endregion
+        #endregion Two Factor Auth
 
         #region Register
 
@@ -601,7 +605,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             return SettingManager.GetSettingValue<bool>(AppSettings.TenantManagement.AllowSelfRegistration);
         }
 
-        #endregion
+        #endregion Register
 
         #region ForgotPassword / ResetPassword
 
@@ -658,7 +662,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             return Redirect(NormalizeReturnUrl(input.ReturnUrl));
         }
 
-        #endregion
+        #endregion ForgotPassword / ResetPassword
 
         #region Email activation / confirmation
 
@@ -689,7 +693,7 @@ namespace Afonsoft.Ranking.Web.Controllers
                 });
         }
 
-        #endregion
+        #endregion Email activation / confirmation
 
         #region External Login
 
@@ -715,45 +719,38 @@ namespace Afonsoft.Ranking.Web.Controllers
         public virtual async Task<ActionResult> ExternalLoginCallback(string returnUrl, string remoteError = null, string ss = "")
         {
             returnUrl = NormalizeReturnUrl(returnUrl);
-
             if (remoteError != null)
             {
                 Logger.Error("Remote Error in ExternalLoginCallback: " + remoteError);
                 throw new UserFriendlyException(L("CouldNotCompleteLoginOperation"));
             }
-
             var externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync();
             if (externalLoginInfo == null)
             {
                 Logger.Warn("Could not get information from external login.");
                 return RedirectToAction(nameof(Login));
             }
-
-            var tenancyName = GetTenancyNameOrNull();
-
-            var loginResult = await _logInManager.LoginAsync(externalLoginInfo, tenancyName);
-
+            var loginResult = await _logInManager.LoginAsync(externalLoginInfo);//use new login method that you add previously
             switch (loginResult.Result)
             {
                 case AbpLoginResultType.Success:
                     {
                         await _signInManager.SignInAsync(loginResult.Identity, false);
-
                         if (!string.IsNullOrEmpty(ss) && ss.Equals("true", StringComparison.OrdinalIgnoreCase) && loginResult.Result == AbpLoginResultType.Success)
                         {
                             loginResult.User.SetSignInToken();
                             returnUrl = AddSingleSignInParametersToReturnUrl(returnUrl, loginResult.User.SignInToken, loginResult.User.Id, loginResult.User.TenantId);
                         }
-
                         return Redirect(returnUrl);
                     }
                 case AbpLoginResultType.UnknownExternalLogin:
                     return await RegisterForExternalLogin(externalLoginInfo);
+
                 default:
                     throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
                         loginResult.Result,
                         externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email) ?? externalLoginInfo.ProviderKey,
-                        tenancyName
+                        loginResult.Tenant?.Name
                     );
             }
         }
@@ -787,7 +784,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             return RegisterView(viewModel);
         }
 
-        #endregion
+        #endregion External Login
 
         #region Impersonation
 
@@ -813,7 +810,7 @@ namespace Afonsoft.Ranking.Web.Controllers
         }
 
         [AbpMvcAuthorize]
-        public virtual async Task<JsonResult> DelegatedImpersonate([FromBody]DelegatedImpersonateInput input)
+        public virtual async Task<JsonResult> DelegatedImpersonate([FromBody] DelegatedImpersonateInput input)
         {
             var userDelegation = await _userDelegationManager.GetAsync(input.UserDelegationId);
             if (userDelegation.TargetUserId != AbpSession.GetUserId())
@@ -872,7 +869,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             });
         }
 
-        #endregion
+        #endregion Impersonation
 
         #region Linked Account
 
@@ -899,7 +896,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             return RedirectToAppHome();
         }
 
-        #endregion
+        #endregion Linked Account
 
         #region Change Tenant
 
@@ -912,18 +909,18 @@ namespace Afonsoft.Ranking.Web.Controllers
             });
         }
 
-        #endregion
+        #endregion Change Tenant
 
         #region Common
 
-        private string GetTenancyNameOrNull()
+        private async Task<string> GetTenancyNameOrNull(string email)
         {
-            if (!AbpSession.TenantId.HasValue)
+            var tenantId = await _userManager.TryGetTenantIdOfUser(email);
+            if (!tenantId.HasValue)
             {
                 return null;
             }
-
-            return _tenantCache.GetOrNull(AbpSession.TenantId.Value)?.TenancyName;
+            return _tenantCache.GetOrNull(tenantId.Value)?.TenancyName;
         }
 
         private void CheckCurrentTenant(int? tenantId)
@@ -949,7 +946,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             }
         }
 
-        #endregion
+        #endregion Common
 
         #region Helpers
 
@@ -979,7 +976,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             {
                 return defaultValueBuilder();
             }
-            
+
             if (Url.IsLocalUrl(returnUrl) || _webUrlService.GetRedirectAllowedExternalWebSites().Any(returnUrl.Contains))
             {
                 return returnUrl;
@@ -988,7 +985,7 @@ namespace Afonsoft.Ranking.Web.Controllers
             return defaultValueBuilder();
         }
 
-        #endregion
+        #endregion Helpers
 
         #region Etc
 
@@ -1009,6 +1006,6 @@ namespace Afonsoft.Ranking.Web.Controllers
             return Content("Sent notification: " + message);
         }
 
-        #endregion
+        #endregion Etc
     }
 }

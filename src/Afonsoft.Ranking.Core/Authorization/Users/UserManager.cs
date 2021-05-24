@@ -19,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Afonsoft.Ranking.Authorization.Roles;
 using Afonsoft.Ranking.Security;
+using Microsoft.EntityFrameworkCore;
 
 namespace Afonsoft.Ranking.Authorization.Users
 {
@@ -50,7 +51,7 @@ namespace Afonsoft.Ranking.Authorization.Users
             IRepository<OrganizationUnit, long> organizationUnitRepository,
             IRepository<UserOrganizationUnit, long> userOrganizationUnitRepository,
             IOrganizationUnitSettings organizationUnitSettings,
-            ISettingManager settingManager, 
+            ISettingManager settingManager,
             ILocalizationManager localizationManager)
             : base(
                   roleManager,
@@ -112,7 +113,7 @@ namespace Afonsoft.Ranking.Authorization.Users
             {
                 return base.SetRolesAsync(user, roleNames);
             }
-            
+
             // Always keep admin role for admin user
             var roles = roleNames.ToList();
             roles.Add(StaticRoleNames.Host.Admin);
@@ -195,6 +196,15 @@ namespace Afonsoft.Ranking.Authorization.Users
                 !permissions.Any(p => p.Name == AppPermissions.Pages_Administration_Users_ChangePermissions)))
             {
                 throw new UserFriendlyException(L("YouCannotRemoveUserRolePermissionsFromAdminUser"));
+            }
+        }
+
+        public async Task<int?> TryGetTenantIdOfUser(string userEmail)
+        {
+            using (_unitOfWorkManager.Current.DisableFilter(AbpDataFilters.MayHaveTenant))
+            {
+                var user = await Users.SingleOrDefaultAsync(u => u.EmailAddress == userEmail.Trim());
+                return user?.TenantId;
             }
         }
 
