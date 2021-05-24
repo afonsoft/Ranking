@@ -27,6 +27,16 @@ namespace Afonsoft.Ranking.MultiTenancy
 
         public virtual Guid? LogoId { get; set; }
 
+        public string Address { get; set; }
+
+        public string UrlAccess { get; set; }
+
+        public bool AllowSubscriptions { get; set; }
+
+        public string Sigla { get; set; }
+
+        public long UserIdMaster { get; set; }
+
         [MaxLength(MaxLogoMimeTypeLength)]
         public virtual string LogoFileType { get; set; }
 
@@ -34,13 +44,11 @@ namespace Afonsoft.Ranking.MultiTenancy
 
         protected Tenant()
         {
-
         }
 
         public Tenant(string tenancyName, string name)
             : base(tenancyName, name)
         {
-
         }
 
         public virtual bool HasLogo()
@@ -67,12 +75,14 @@ namespace Afonsoft.Ranking.MultiTenancy
                 case EditionPaymentType.Extend:
                     ExtendSubscriptionDate(paymentPeriodType);
                     break;
+
                 case EditionPaymentType.Upgrade:
                     if (HasUnlimitedTimeSubscription())
                     {
                         SubscriptionEndDateUtc = Clock.Now.ToUniversalTime().AddDays((int)paymentPeriodType);
                     }
                     break;
+
                 default:
                     throw new ArgumentException();
             }

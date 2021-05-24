@@ -26,5 +26,15 @@ namespace Afonsoft.Ranking.MultiTenancy.Dto
         public int? EditionId { get; set; }
 
         public bool IsInTrialPeriod { get; set; }
+
+        public string Address { get; set; }
+
+        public string UrlAccess { get; set; }
+
+        public bool AllowSubscriptions { get; set; }
+
+        public string Sigla { get; set; }
+
+        public long UserIdMaster { get; set; }
     }
 }

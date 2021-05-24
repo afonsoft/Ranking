@@ -44,4 +44,8 @@
 		<ProjectReference Include="..\Abp.AspNetZeroCore\Abp.AspNetZeroCore\Abp.AspNetZeroCore.csproj" />
 		<ProjectReference Include="..\Afonsoft.Ranking.Core.Shared\Afonsoft.Ranking.Core.Shared.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Ranking\" />
+	</ItemGroup>
 </Project>
