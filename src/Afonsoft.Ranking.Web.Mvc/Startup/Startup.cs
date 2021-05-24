@@ -114,6 +114,9 @@ namespace Afonsoft.Ranking.Web.Startup
 
             services.AddScoped<IWebResourceManager, WebResourceManager>();
 
+            services.AddSingleton<TenantTransformer>();
+            services.AddSingleton<TenantDatabase>();
+
             services.AddSignalR();
 
             services.Configure<SecurityStampValidatorOptions>(options =>
@@ -254,6 +257,7 @@ namespace Afonsoft.Ranking.Web.Startup
 
                 endpoints.MapControllerRoute("defaultWithArea", "{area}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDynamicControllerRoute<TenantTransformer>("{area}/{tenant}/{controller}/{action}/{id?}");
 
                 if (bool.Parse(_appConfiguration["HealthChecks:HealthChecksEnabled"]))
                 {

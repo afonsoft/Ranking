@@ -20,6 +20,7 @@ using Afonsoft.Ranking.Configuration;
 using Afonsoft.Ranking.EntityFrameworkCore;
 using Afonsoft.Ranking.Web.Authentication.JwtBearer;
 using Afonsoft.Ranking.Web.Configuration;
+using System;
 
 namespace Afonsoft.Ranking.Web
 {
@@ -64,11 +65,17 @@ namespace Afonsoft.Ranking.Web
                     typeof(RankingApplicationModule).GetAssembly()
                 );
 
+            //Configuration for all caches
+            Configuration.Caching.ConfigureAll(cache =>
+            {
+                cache.DefaultSlidingExpireTime = TimeSpan.FromHours(24);
+            });
+
             Configuration.Caching.Configure(TwoFactorCodeCacheItem.CacheName,
-                cache =>
-                {
-                    cache.DefaultSlidingExpireTime = TwoFactorCodeCacheItem.DefaultSlidingExpireTime;
-                });
+            cache =>
+            {
+                cache.DefaultSlidingExpireTime = TwoFactorCodeCacheItem.DefaultSlidingExpireTime;
+            });
 
             if (_appConfiguration["Authentication:JwtBearer:IsEnabled"] != null &&
                 bool.Parse(_appConfiguration["Authentication:JwtBearer:IsEnabled"]))
