@@ -24,6 +24,6 @@ namespace Afonsoft.Ranking.Championships
         [ForeignKey("ChampionshipId")]
         public virtual Championship Championship { get; set; }
 
-        public virtual List<UserTeamChampionship> UserTeamChampionships { get; set; }
+        public virtual ICollection<UserTeamChampionship> UserTeamChampionships { get; set; }
     }
 }

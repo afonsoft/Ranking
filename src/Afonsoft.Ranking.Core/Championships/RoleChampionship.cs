@@ -11,23 +11,14 @@ using System.Threading.Tasks;
 namespace Afonsoft.Ranking.Championships
 {
     [MultiTenancySide(MultiTenancySides.Tenant)]
-    [Table("AbpCalendarChampionship")]
-    public class CalendarChampionship : FullAuditedEntity<long>, IMustHaveTenant
+    [Table("AbpRoleChampionship")]
+    public class RoleChampionship : FullAuditedEntity<long>, IMustHaveTenant
     {
         public int TenantId { get; set; }
         public long ChampionshipId { get; set; }
-        public string Name { get; set; }
-
-        public string Track { get; set; }
-
-        public DateTime Schedule { get; set; }
-
-        public string Circuit { get; set; }
-        public bool Active { get; set; }
+        public string RoleDescription { get; set; }
 
         [ForeignKey("ChampionshipId")]
         public virtual Championship Championship { get; set; }
-
-        public virtual ICollection<CalendarResult> CalendarResults { get; set; }
     }
 }

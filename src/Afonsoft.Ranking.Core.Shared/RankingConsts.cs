@@ -10,7 +10,7 @@
 
         public const bool AllowTenantsToChangeEmailSettings = false;
 
-        public const string Currency = "USD";
+        public const string Currency = "BRL";
 
         public const string CurrencySign = "$";
 

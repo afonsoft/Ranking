@@ -47,6 +47,10 @@ namespace Afonsoft.Ranking.EntityFrameworkCore
 
         public virtual DbSet<UserTeamChampionship> UserTeamChampionships { get; set; }
 
+        public virtual DbSet<CalendarResult> CalendarResults { get; set; }
+
+        public virtual DbSet<RoleChampionship> RoleChampionships { get; set; }
+
         public RankingDbContext(DbContextOptions<RankingDbContext> options)
             : base(options)
         {
@@ -120,6 +124,16 @@ namespace Afonsoft.Ranking.EntityFrameworkCore
             modelBuilder.Entity<UserTeamChampionship>(b =>
             {
                 b.HasIndex(e => new { e.TenantId, e.UserId, e.Id, e.TeamId });
+            });
+
+            modelBuilder.Entity<RoleChampionship>(b =>
+            {
+                b.HasIndex(e => new { e.TenantId, e.ChampionshipId, e.Id });
+            });
+
+            modelBuilder.Entity<CalendarResult>(b =>
+            {
+                b.HasIndex(e => new { e.TenantId, e.CalendarId, e.Id, e.UserTeamId });
             });
 
             modelBuilder.ConfigurePersistedGrantEntity();

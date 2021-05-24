@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Abp.MultiTenancy;
 using Abp.Timing;
 using Afonsoft.Ranking.Authorization.Users;
+using Afonsoft.Ranking.Championships;
 using Afonsoft.Ranking.Editions;
 using Afonsoft.Ranking.MultiTenancy.Payments;
 
@@ -36,6 +38,8 @@ namespace Afonsoft.Ranking.MultiTenancy
         public string Sigla { get; set; }
 
         public long UserIdMaster { get; set; }
+
+        public virtual List<Championship> Championships { get; set; }
 
         [MaxLength(MaxLogoMimeTypeLength)]
         public virtual string LogoFileType { get; set; }
