@@ -1,6 +1,7 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Abp.MultiTenancy;
+using Afonsoft.Ranking.Authorization.Users;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,7 +17,7 @@ namespace Afonsoft.Ranking.Championships
     {
         public int TenantId { get; set; }
         public long CalendarId { get; set; }
-        public long? UserTeamId { get; set; }
+        public long? UserId { get; set; }
         public int Hour { get; set; }
         public int Minute { get; set; }
         public int Second { get; set; }
@@ -31,7 +32,7 @@ namespace Afonsoft.Ranking.Championships
         [ForeignKey("CalendarId")]
         public virtual CalendarChampionship CalendarChampionship { get; set; }
 
-        [ForeignKey("UserTeamId")]
-        public virtual UserTeamChampionship UserTeam { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
     }
 }

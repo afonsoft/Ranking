@@ -14,6 +14,7 @@ using Afonsoft.Ranking.Storage;
 using Afonsoft.Ranking.Championships;
 
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace Afonsoft.Ranking.EntityFrameworkCore
 {
@@ -133,7 +134,7 @@ namespace Afonsoft.Ranking.EntityFrameworkCore
 
             modelBuilder.Entity<CalendarResult>(b =>
             {
-                b.HasIndex(e => new { e.TenantId, e.CalendarId, e.Id, e.UserTeamId });
+                b.HasIndex(e => new { e.TenantId, e.CalendarId, e.Id, e.UserId });
             });
 
             modelBuilder.ConfigurePersistedGrantEntity();
