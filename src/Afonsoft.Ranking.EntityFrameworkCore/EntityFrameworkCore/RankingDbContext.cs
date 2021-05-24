@@ -11,6 +11,7 @@ using Afonsoft.Ranking.MultiTenancy;
 using Afonsoft.Ranking.MultiTenancy.Accounting;
 using Afonsoft.Ranking.MultiTenancy.Payments;
 using Afonsoft.Ranking.Storage;
+using Afonsoft.Ranking.Championships;
 
 namespace Afonsoft.Ranking.EntityFrameworkCore
 {
@@ -36,10 +37,11 @@ namespace Afonsoft.Ranking.EntityFrameworkCore
 
         public virtual DbSet<UserDelegation> UserDelegations { get; set; }
 
+        public virtual DbSet<Championship> Championships { get; set; }
+
         public RankingDbContext(DbContextOptions<RankingDbContext> options)
             : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
