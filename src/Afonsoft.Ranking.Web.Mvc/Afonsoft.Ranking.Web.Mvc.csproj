@@ -72,10 +72,10 @@
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="npm install --legacy-peer-deps" />
+		<!--<Exec Command="npm install legacy-peer-deps" />-->
 	</Target>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="gulp build" />
+		<!--<Exec Command="gulp build" />-->
 	</Target>
 </Project>

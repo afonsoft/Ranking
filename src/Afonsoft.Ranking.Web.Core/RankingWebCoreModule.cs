@@ -49,6 +49,13 @@ namespace Afonsoft.Ranking.Web
                 RankingConsts.ConnectionStringName
             );
 
+            Configuration.Modules.AbpWebCommon().SendAllExceptionsToClients = true;
+
+            Configuration.Auditing.IsEnabledForAnonymousUsers = true;
+            Configuration.Auditing.IsEnabled = true;
+            Configuration.EntityHistory.IsEnabled = true;
+            Configuration.EntityHistory.IsEnabledForAnonymousUsers = true;
+
             //Use database for language management
             Configuration.Modules.Zero().LanguageManagement.EnableDbLocalization();
 
@@ -73,7 +80,7 @@ namespace Afonsoft.Ranking.Web
 
             Configuration.ReplaceService<IAppConfigurationWriter, AppConfigurationWriter>();
 
-            //Uncomment this line to use Hangfire instead of default background job manager (remember also to uncomment related lines in Startup.cs file(s)).
+            //To use Hangfire instead of default background job manager (remember also to uncomment related lines in Startup.cs file(s)).
             Configuration.BackgroundJobs.UseHangfire();
 
             //Uncomment this line to use Redis cache instead of in-memory cache.

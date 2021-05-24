@@ -11,17 +11,19 @@ using System.Threading.Tasks;
 namespace Afonsoft.Ranking.Championships
 {
     [MultiTenancySide(MultiTenancySides.Tenant)]
-    [Table("AbpChampionship")]
-    public class Championship : FullAuditedEntity<long>, IMustHaveTenant
+    [Table("AbpCalendarChampionship")]
+    public class CalendarChampionship : FullAuditedEntity<long>, IMustHaveTenant
     {
         public int TenantId { get; set; }
 
-        public DateTime DateStart { get; set; }
-
-        public DateTime DateEnd { get; set; }
-
         public string Name { get; set; }
 
-        public virtual List<CalendarChampionship> CalendarChampionships { get; set; }
+        public string Track { get; set; }
+
+        public DateTime Schedule { get; set; }
+
+        public string Circuit { get; set; }
+
+        public virtual Championship Championship { get; set; }
     }
 }

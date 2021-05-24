@@ -13,11 +13,14 @@ using Afonsoft.Ranking.MultiTenancy.Payments;
 using Afonsoft.Ranking.Storage;
 using Afonsoft.Ranking.Championships;
 
+using Microsoft.Extensions.Configuration;
+
 namespace Afonsoft.Ranking.EntityFrameworkCore
 {
     public class RankingDbContext : AbpZeroDbContext<Tenant, Role, User, RankingDbContext>, IAbpPersistedGrantDbContext
     {
         /* Define an IDbSet for each entity of the application */
+        private readonly IConfigurationRoot _appConfiguration;
 
         public virtual DbSet<BinaryObject> BinaryObjects { get; set; }
 
@@ -39,9 +42,28 @@ namespace Afonsoft.Ranking.EntityFrameworkCore
 
         public virtual DbSet<Championship> Championships { get; set; }
 
+        public virtual DbSet<CalendarChampionship> CalendarChampionships { get; set; }
+
         public RankingDbContext(DbContextOptions<RankingDbContext> options)
             : base(options)
         {
+            _appConfiguration = null;
+        }
+
+        public RankingDbContext(DbContextOptions<RankingDbContext> options,
+            IConfigurationRoot appConfiguration)
+            : base(options)
+        {
+            _appConfiguration = appConfiguration;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (_appConfiguration != null && !optionsBuilder.IsConfigured)
+            {
+                var connectionString = _appConfiguration[$"ConnectionStrings:{RankingConsts.ConnectionStringName}"];
+                optionsBuilder.UseSqlServer(connectionString);
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -92,6 +114,11 @@ namespace Afonsoft.Ranking.EntityFrameworkCore
             {
                 b.HasIndex(e => new { e.TenantId, e.SourceUserId });
                 b.HasIndex(e => new { e.TenantId, e.TargetUserId });
+            });
+
+            modelBuilder.Entity<Championship>(b =>
+            {
+                b.HasIndex(e => new { e.TenantId });
             });
 
             modelBuilder.ConfigurePersistedGrantEntity();

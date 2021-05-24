@@ -40,6 +40,8 @@ using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using Microsoft.EntityFrameworkCore;
+using Abp.EntityFrameworkCore;
 
 namespace Afonsoft.Ranking.Web.Startup
 {
@@ -167,10 +169,10 @@ namespace Afonsoft.Ranking.Web.Startup
             {
                 //Configure Log4Net logging
                 options.IocManager.IocContainer.AddFacility<LoggingFacility>(
-                    f => f.UseAbpLog4Net().WithConfig(_hostingEnvironment.IsDevelopment()
+                        f => f.UseAbpLog4Net().WithConfig(_hostingEnvironment.IsDevelopment()
                         ? "log4net.config"
                         : "log4net.Production.config")
-                );
+                        );
 
                 options.PlugInSources.AddFolder(Path.Combine(_hostingEnvironment.WebRootPath, "Plugins"),
                     SearchOption.AllDirectories);

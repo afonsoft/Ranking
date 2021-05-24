@@ -31,13 +31,6 @@ namespace Afonsoft.Ranking.Web.Startup
             Configuration.Modules.AbpWebCommon().MultiTenancy.DomainFormat = _appConfiguration["App:WebSiteRootAddress"] ?? "https://localhost:44302/";
             Configuration.Modules.AspNetZero().LicenseCode = "AFONSOFT";
 
-            Configuration.Modules.AbpWebCommon().SendAllExceptionsToClients = true;
-
-            Configuration.Auditing.IsEnabledForAnonymousUsers = false;
-            Configuration.Auditing.IsEnabled = true;
-            Configuration.EntityHistory.IsEnabled = true;
-            Configuration.EntityHistory.IsEnabledForAnonymousUsers = false;
-
             Configuration.Navigation.Providers.Add<AppNavigationProvider>();
 
             IocManager.Register<DashboardViewConfiguration>();
