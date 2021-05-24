@@ -27,7 +27,7 @@ namespace Afonsoft.Ranking.EntityFrameworkCore
 
             RankingDbContextConfigurer.Configure(builder, configuration.GetConnectionString(RankingConsts.ConnectionStringName));
 
-            return new RankingDbContext(builder.Options, configuration);
+            return new RankingDbContext(builder.Options);
         }
     }
 }
