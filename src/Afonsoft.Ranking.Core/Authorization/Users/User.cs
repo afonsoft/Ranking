@@ -24,6 +24,28 @@ namespace Afonsoft.Ranking.Authorization.Users
 
         public List<UserOrganizationUnit> OrganizationUnits { get; set; }
 
+        public string Telephone { get; set; }
+        public string Celphone { get; set; }
+
+        public string Address { get; set; }
+
+        /// <summary>
+        /// Sexo
+        /// </summary>
+        public char? Gender { get; set; }
+
+        public DateTime? Birthday { get; set; }
+
+        /// <summary>
+        /// Altura
+        /// </summary>
+        public decimal? Height { get; set; }
+
+        /// <summary>
+        /// Peso
+        /// </summary>
+        public decimal? Weight { get; set; }
+
         //Can add application specific user properties here
 
         public User()

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Abp;
 using Abp.AspNetZeroCore;
@@ -17,21 +16,16 @@ using Abp.Domain.Uow;
 using Abp.Events.Bus;
 using Abp.Events.Bus.Exceptions;
 using Abp.Json;
-using Abp.Localization.Dictionaries.Xml;
-using Abp.Localization.Sources;
 using Abp.MailKit;
 using Abp.Net.Mail.Smtp;
-using Abp.Threading;
 using Abp.Threading.BackgroundWorkers;
 using Abp.Threading.Timers;
 using Abp.Zero;
 using Abp.Zero.Configuration;
 using Abp.Zero.Ldap;
-using Abp.Zero.Ldap.Configuration;
 using Castle.MicroKernel.Registration;
 using MailKit.Security;
 using Afonsoft.Ranking.Authorization.Delegation;
-using Afonsoft.Ranking.Authorization.Ldap;
 using Afonsoft.Ranking.Authorization.Roles;
 using Afonsoft.Ranking.Authorization.Users;
 using Afonsoft.Ranking.Chat;
@@ -92,7 +86,7 @@ namespace Afonsoft.Ranking
             //Enable this line to create a multi-tenant application.
             Configuration.MultiTenancy.IsEnabled = RankingConsts.MultiTenancyEnabled;
 
-            //Enable LDAP authentication 
+            //Enable LDAP authentication
             //Configuration.Modules.ZeroLdap().Enable(typeof(AppLdapAuthenticationSource));
 
             //Twilio - Enable this line to activate Twilio SMS integration
@@ -129,7 +123,7 @@ namespace Afonsoft.Ranking
             });
 
             IocManager.Register<DashboardConfiguration>();
-            
+
             Configuration.ReplaceService<IBackgroundJobManager, MyBackgroundJobManager>(DependencyLifeStyle.Singleton);
         }
 
@@ -147,7 +141,7 @@ namespace Afonsoft.Ranking
             IocManager.Resolve<AppTimes>().StartupTime = Clock.Now;
         }
     }
-    
+
     /// <summary>
     /// Default implementation of <see cref="IBackgroundJobManager"/>.
     /// </summary>
@@ -302,12 +296,12 @@ namespace Afonsoft.Ranking
 
                         if (jobExecuteMethod.Name == nameof(IAsyncBackgroundJob<object>.ExecuteAsync))
                         {
-                            Task result = (Task)jobExecuteMethod.Invoke(job.Object, new[] {argsObj});
+                            Task result = (Task)jobExecuteMethod.Invoke(job.Object, new[] { argsObj });
                             await result;
                         }
                         else
                         {
-                            jobExecuteMethod.Invoke(job.Object, new[] {argsObj});
+                            jobExecuteMethod.Invoke(job.Object, new[] { argsObj });
                         }
 
                         await _store.DeleteAsync(jobInfo);

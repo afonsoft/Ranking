@@ -27,5 +27,19 @@ namespace Afonsoft.Ranking.Authorization.Users.Dto
         public bool IsActive { get; set; }
 
         public DateTime CreationTime { get; set; }
+
+        public string Telephone { get; set; }
+
+        public string Celphone { get; set; }
+
+        public string Address { get; set; }
+
+        public char? Gender { get; set; }
+
+        public DateTime? Birthday { get; set; }
+
+        public decimal? Height { get; set; }
+
+        public decimal? Weight { get; set; }
     }
 }
