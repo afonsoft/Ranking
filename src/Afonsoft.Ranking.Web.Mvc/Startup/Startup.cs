@@ -257,7 +257,7 @@ namespace Afonsoft.Ranking.Web.Startup
 
                 endpoints.MapControllerRoute("defaultWithArea", "{area}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapDynamicControllerRoute<TenantTransformer>("{area}/{tenant}/{controller}/{action}/{id?}");
+                endpoints.MapDynamicControllerRoute<TenantTransformer>("{tenant}/{controller}/{action}/{id?}");
 
                 if (bool.Parse(_appConfiguration["HealthChecks:HealthChecksEnabled"]))
                 {

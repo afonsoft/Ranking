@@ -68,7 +68,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Areas\Tenent\" />
+		<Folder Include="Areas\Tenant\" />
 		<Folder Include="LOGS\" />
 	</ItemGroup>
 

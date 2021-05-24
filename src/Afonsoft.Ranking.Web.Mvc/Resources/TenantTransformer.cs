@@ -22,7 +22,8 @@ namespace Afonsoft.Ranking.Web.Resources
             if (!values.ContainsKey("tenant") || !values.ContainsKey("controller") || !values.ContainsKey("action") || values["tenant"] == "App")
                 return ValueTask.FromResult(values);
 
-            values["TenentId"] = _tenentDatabase.Resolve(values["Tenent"] as string);
+            values["tenantId"] = _tenentDatabase.Resolve(values["tenant"] as string);
+            values["tenant"] = "Tenant";
 
             return ValueTask.FromResult(values);
         }
